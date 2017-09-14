@@ -8,7 +8,7 @@ class connect:
 
     def step(self, col):
         self.M+=1
-        if M%2==0:
+        if self.M%2==0:
             color=1
         else:
             color=-1
@@ -22,12 +22,12 @@ class connect:
                     self.moves[col]=False
                 self.area[col][i]=color
                 break
-        if checkWin()!=0:
-            if color==checkWin():
-                return getObs(), 1, True
+        if self.checkWin()!=0:
+            if color==self.checkWin():
+                return self.getObs(), 1, True
             else:
-                return getObs(), -1, True
-        return getObs(), 0, False
+                return self.getObs(), -1, True
+        return self.getObs(), 0, False
             
     def getObs(self):
         return np.reshape( self.area, self.height*self.width )
@@ -41,7 +41,7 @@ class connect:
             self.moves.append(True)
             for j in range(self.height):
                 self.area[i].append(0)
-        if e: return getObs()
+        if e: return self.getObs()
         
     def checkWin(self):
         for x in range(len(self.area)):
