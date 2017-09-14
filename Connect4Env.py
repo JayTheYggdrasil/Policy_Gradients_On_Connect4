@@ -8,7 +8,7 @@ class connect:
 
     def step(self, col):
         self.M+=1
-        if self.M%2==0:
+        if self.M%2==1:
             color=1
         else:
             color=-1

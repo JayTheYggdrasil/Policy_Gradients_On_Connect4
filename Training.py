@@ -40,32 +40,37 @@ def test(player): #Player vs AI: param: what player you want to be, 1 or 2, anyt
 sess=tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
 Games=100000
+discount=0.5
+G=0
 with tf.device('/gpu:0'):
     while True:
+        G+=1
         Obs=Env.reset()
-        R1=0
-        R2=0
+        R1=[]
+        R2=[]
         Actions1=[]
         Actions2=[]
         while True:
             Actions1.append([Agent1.predict(Obs), Obs])
             Obs, R, done = Env.step(np.argmax(Actions1[-1][0]))
-            R1+=R
+            R1.append(R)
             if done:
+                R2.append(-R)
                 break
             Actions2.append([Agent2.predict(Obs), Obs])
             Obs, R, done = Env.step(np.argmax(Actions2[-1][0]))
-            R2+=R
+            R2.append(R)
             if done:
+                R1.append(-R)
                 break
-        for a in Actions1:
+        for a in range(1,len(Actions1)+1):
             targ = [0] * 7
-            targ[np.argmax(a[0])] = 1
-            Agent1.Update([a[1]], targ, R1)
+            targ[np.argmax(Actions1[-a][0])] = 1
+            Agent1.Update([Actions1[-a][1]], targ, sum(R1)*discount**a)
                 
 
-        for a in Actions2:
+        for a in range(1,len(Actions2)+1):
             targ = [0] * 7
-            targ[np.argmax(a[0])] = 1
-            Agent2.Update([a[1]], targ, R2)
+            targ[np.argmax(Actions2[-a][0])] = 1
+            Agent1.Update([Actions2[-a][1]], targ, sum(R2)*discount**a)
     
