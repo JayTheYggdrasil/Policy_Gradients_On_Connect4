@@ -2,11 +2,12 @@ from Agent import RL
 from Connect4Env import connect
 import tensorflow as tf
 import numpy as np
+import argparse
 
 parser = argparse.ArgumentParser(description='Connect 4 reinforcement learning trainer')
-parser.add_argument('--maxgames', type=str, default='100000',
+parser.add_argument('--maxgames', type=int, default='100000',
                     help='maximum number of games to play')
-parser.add_argument('--loginterval', type=str, default='100',
+parser.add_argument('--loginterval', type=int, default='100',
                     help='how often to print the game number')
 args = parser.parse_args()
 
@@ -48,7 +49,8 @@ sess=tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
 discount=0.5
 for game in range(args.maxgames):
-        if game % args.loginterval: print("Game {:9d} out of {:9d}.".format(game, args.maxgames)
+        if game % args.loginterval == 0: 
+            print("Game {:9d} out of {:9d}.".format(game, args.maxgames))
         Obs=Env.reset()
         R1=[]
         R2=[]
