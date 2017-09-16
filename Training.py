@@ -3,6 +3,13 @@ from Connect4Env import connect
 import tensorflow as tf
 import numpy as np
 
+parser = argparse.ArgumentParser(description='Connect 4 reinforcement learning trainer')
+parser.add_argument('--maxgames', type=str, default='100000',
+                    help='maximum number of games to play')
+parser.add_argument('--loginterval', type=str, default='100',
+                    help='how often to print the game number')
+args = parser.parse_args()
+
 Env = connect(6,7)
 Agent1 = RL([None,6*7])
 Agent2 = RL([None,6*7])
@@ -39,12 +46,9 @@ def test(player): #Player vs AI: param: what player you want to be, 1 or 2, anyt
 
 sess=tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
-Games=100000
 discount=0.5
-G=0
-with tf.device('/gpu:0'):
-    while True:
-        G+=1
+for game in range(args.maxgames):
+        if game % args.loginterval: print("Game {:9d} out of {:9d}.".format(game, args.maxgames)
         Obs=Env.reset()
         R1=[]
         R2=[]
