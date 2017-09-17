@@ -47,7 +47,6 @@ def test(player): #Player vs AI: param: what player you want to be, 1 or 2, anyt
 
 sess=tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
-<<<<<<< HEAD
 Games=100000
 discount=0.35
 G=0
@@ -59,7 +58,6 @@ discount=0.5
 for game in range(args.maxgames):
         if game % args.loginterval == 0: 
             print("Game {:9d} out of {:9d}.".format(game, args.maxgames))
->>>>>>> 3de7433c1c52d090c7aff510cd9a8e8e952efc03
         Obs=Env.reset()
         R1=[]
         R2=[]
