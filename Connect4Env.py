@@ -27,7 +27,10 @@ class connect:
                 return self.getObs(), 1, True
             else:
                 return self.getObs(), -1, True
-        return self.getObs(), 0, False
+        if not(True in self.moves):
+            return self.getObs(), 0, True
+        else:
+            return self.getObs(), 0, False
             
     def getObs(self):
         return np.reshape( self.area, self.height*self.width )

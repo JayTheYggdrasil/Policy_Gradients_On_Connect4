@@ -40,9 +40,9 @@ def test(player): #Player vs AI: param: what player you want to be, 1 or 2, anyt
 sess=tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
 Games=100000
-discount=0.5
+discount=0.35
 G=0
-with tf.device('/gpu:0'):
+with tf.device('/cpu:0'):
     while True:
         G+=1
         Obs=Env.reset()
