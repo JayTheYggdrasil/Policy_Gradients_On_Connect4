@@ -6,7 +6,7 @@ class connect:
         self.width=width
         self.reset(e=False)
 
-    def step(self, col):
+    def step(self, col, Nplayer):
         self.M+=1
         if self.M%2==1:
             color=1
@@ -24,16 +24,16 @@ class connect:
                 break
         if self.checkWin()!=0:
             if color==self.checkWin():
-                return self.getObs(), 1, True
+                return self.getObs(Nplayer), 1, True
             else:
-                return self.getObs(), -1, True
+                return self.getObs(Nplayer), -1, True
         if not(True in self.moves):
-            return self.getObs(), 0, True
+            return self.getObs(Nplayer), 0, True
         else:
-            return self.getObs(), 0, False
+            return self.getObs(Nplayer), 0, False
             
-    def getObs(self):
-        return np.reshape( self.area, self.height*self.width )
+    def getObs( self, Nplayer ):
+        return np.reshape( self.area, self.height*self.width ) * Nplayer
             
     def reset(self, e=True):
         self.area=[]
@@ -44,7 +44,7 @@ class connect:
             self.moves.append(True)
             for j in range(self.height):
                 self.area[i].append(0)
-        if e: return self.getObs()
+        if e: return self.getObs( -1 )
         
     def checkWin(self):
         for x in range(len(self.area)):
