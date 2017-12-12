@@ -47,16 +47,18 @@ class connect:
         if e: return self.getObs( -1 )
         
     def checkWin(self):
-        for x in range(len(self.area)):
-            for y in range(len(self.area[x])):
-                for dx in [-1,0,1]:
-                    for dy in [-1,0,1]:
-                        try:
-                            if self.area[x][y]!= 0 and [dx,dy] != [0,0] and x+3*dx >= 0 and y+3*dy>=0 and self.area[x][y]==self.area[x+dx][y+dy] and self.area[x][y]==self.area[x+2*dx][y+2*dy] and self.area[x][y]==self.area[x+3*dx][y+3*dy]:
-                                if self.debug==True: print([x,y],[dx,dy])
-                                return self.area[x][y]
-                        except:
-                            nothing=0
+        for y in range(len(self.area[0])):
+            for x in range(len(self.area)):
+                t = self.area[x][y]
+                if t != 0:
+                    for dx in [-1,0,1]:
+                        for dy in [0,1]:
+                            try:
+                                if [dx,dy] != [0,0] and t == self.area[x+dx][y+dy] and t == self.area[x+2*dx][y+2*dy] and t==self.area[x+3*dx][y+3*dy]:
+                                    if self.debug==True: print([x,y],[dx,dy])
+                                    return self.area[x][y]
+                            except:
+                                nothing=0
         return 0
     
     def print(self):
