@@ -15,8 +15,9 @@ class RL:
 
             self.reward = tf.placeholder(tf.float32, name='reward')
             self.old = tf.placeholder(tf.float32, name='old_state')
+            self.action = tf.placeholder(tf.int32, name='action')
             self.e = tf.placeholder(tf.float32)
-            self.r = tf.reduce_mean( ( self.L[-1] / self.old ) * self.reward )
+            self.r = self.L[-1][0][self.action] / self.old[0][self.action]
             self.loss = tf.reduce_min( [self.r * self.reward,
                                         tf.clip_by_value( self.r, 1-self.e, 1 + self.e) * self.reward] )
             #self.loss = self.reward * tf.reduce_mean( tf.log( self.L[-1] + self.Qfix ))
@@ -24,8 +25,8 @@ class RL:
             self.train_step=self.optimizer.minimize(self.loss)
             self.O = Snapshot( self )
 
-    def Update(self, state, reward, e):
-        self.train_step.run( feed_dict = { self._x: [state], self.reward: reward, self.old: self.O.predict( state ), self.e: e} )
+    def Update(self, state, action, reward, e):
+        self.train_step.run( feed_dict = { self._x: [state], self.action: action, self.reward: reward, self.old: self.O.predict( state ), self.e: e} )
         
     def Snap(self):
         del self.O

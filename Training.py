@@ -6,9 +6,9 @@ import numpy as np
 import argparse
 
 parser = argparse.ArgumentParser(description='Connect 4 reinforcement learning trainer')
-parser.add_argument('--maxgames', type=int, default='1000',
+parser.add_argument('--maxgames', type=int, default='100000',
                     help='maximum number of games to play')
-parser.add_argument('--loginterval', type=int, default='100',
+parser.add_argument('--loginterval', type=int, default='10000',
                     help='how often to print the game number')
 args = parser.parse_args()
 
@@ -134,8 +134,8 @@ for game in range(args.maxgames):
         RF = R2
         PF = P2
     for a in range(len(A1)):
-        P1.Update( A1[a][0], R1[a], e )
+        P1.Update( A1[a][0], A1[a][1], R1[a], e )
     for a in range(len(A2)):
-        P2.Update( A2[a][0], R2[a], e )
+        P2.Update( A2[a][0], A2[a][1], R2[a], e )
     sess.run(tf.global_variables_initializer())
     #discount += deltaD
