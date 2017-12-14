@@ -54,7 +54,7 @@ class connect:
                     for dx in [-1,0,1]:
                         for dy in [0,1]:
                             try:
-                                if [dx,dy] != [0,0] and t == self.area[x+dx][y+dy] and t == self.area[x+2*dx][y+2*dy] and t==self.area[x+3*dx][y+3*dy]:
+                                if [dx,dy] != [0,0] and x+3*dx >= 0 and y+3*dx>=0 and t == self.area[x+dx][y+dy] and t == self.area[x+2*dx][y+2*dy] and t==self.area[x+3*dx][y+3*dy]:
                                     if self.debug==True: print([x,y],[dx,dy])
                                     return self.area[x][y]
                             except:

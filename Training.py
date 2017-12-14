@@ -15,6 +15,7 @@ args = parser.parse_args()
 Env = connect(6,7)
 Agent = RL([None,6*7])
 Snaps = [Agent]
+
 def regularize( x ):
     m = max(x)
     n = min(x)
@@ -29,10 +30,11 @@ def discountedR( Rt, a ):
         R += Rt[a:][i] * (discount**i)
     return R
 
-def discountAr( Ar ):
+def discountAr( Arr ):
     A = []
-    for i in range(len(Ar)):
-        A.append( discountedR( Ar, i ) )
+    for Ar in Arr:
+        for i in range(len(Ar)):
+            A.append( discountedR( Ar, i ) )
     return A
 
 def choice( arr ):
@@ -79,11 +81,16 @@ def test(player, opponent): #Player vs AI: param: what player you want to be, 1 
 
 sess=tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
-discount=0.99
+discount=0.9
 e = 0.2
-deltaD = (1 - discount)/args.maxgames
 snapInterval = 10000
+R1=[]
+R2=[]
+Actions1=[]
+Actions2=[]
 for game in range(args.maxgames):
+    r1=[]
+    r2=[]
     if game % args.loginterval == 0: 
         print("Game {:9d} out of {:9d}.".format(game, args.maxgames))
     #if game % snapInterval == 0:
@@ -99,43 +106,45 @@ for game in range(args.maxgames):
         P1 = Opponent
         P2 = Agent
         P = 1
-    R1=[]
-    R2=[]
-    Actions1=[]
-    Actions2=[]
     while True:
         actual = choice( P1.predict( Obs )[0] )
         Actions1.append([ Obs, actual ])
         Obs, R, done = Env.step( actual, 1) 
-        R1.append(R)
+        r1.append(R)
         if done:
-            R2.append(-R)
+            r2.append(-R)
             break
         actual = choice( P2.predict( Obs )[0] )
         Actions2.append([ Obs, actual])
         Obs, R, done = Env.step( actual, -1)
-        R2.append(R)
+        r2.append(R)
         if done:
             if R == 0:
                 R = 1
-                R2[-1] = R
-            R1.append(-R)
+                r2[-1] = R
+            r1.append(-R)
             break
-    R1 = regularize( discountAr(R1) )
-    R2 = regularize( discountAr(R2) )
-    A1 = Actions1
-    A2 = Actions2
-    if P == 0:
-        AF = A1
-        RF = R1
-        PF = P1
-    else:
-        AF = A2
-        RF = R2
-        PF = P2
-    for a in range(len(A1)):
-        P1.Update( A1[a][0], A1[a][1], R1[a], e )
-    for a in range(len(A2)):
-        P2.Update( A2[a][0], A2[a][1], R2[a], e )
-    sess.run(tf.global_variables_initializer())
-    #discount += deltaD
+    R1.append(r1)
+    R2.append(r2)
+    if game % 100 == 0 and game != 0:
+        R1 = regularize( discountAr(R1) )
+        R2 = regularize( discountAr(R2) )
+        A1 = Actions1
+        A2 = Actions2
+        if P == 0:
+            AF = A1
+            RF = R1
+            PF = P1
+        else:
+            AF = A2
+            RF = R2
+            PF = P2
+        for a in range(len(A1)):
+            P1.Update( A1[a][0], A1[a][1], R1[a], e )
+        for a in range(len(A2)):
+            P2.Update( A2[a][0], A2[a][1], R2[a], e )
+        sess.run(tf.global_variables_initializer())
+        R1=[]
+        R2=[]
+        Actions1=[]
+        Actions2=[]
